@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using ZstdNet;
+using ImpromptuNinjas.ZStd;
 
 
 namespace Eastward {
@@ -32,14 +32,14 @@ namespace Eastward {
 
 		private FileStream _fileStream;
 		private BinaryReader _binaryReader;
-		private Decompressor _decompressor;
+		private ZStdDecompressor _decompressor;
 		private Dictionary< GPackEntry, string > _fileDictionary;
 
 
 		public GPack ( FileStream stream ) {
 			_fileStream = stream;
 			_binaryReader = new BinaryReader ( stream );
-			_decompressor = new Decompressor ();
+			_decompressor = new ZStdDecompressor ();
 
 			var magicNumber = _binaryReader.ReadBytes ( 4 );
 			// if ( !magicNumber.Equals ( MAGIC_NUMBER ) ) {
@@ -93,7 +93,7 @@ namespace Eastward {
 				case 2:
 					_binaryReader.BaseStream.Seek ( entry.offset, SeekOrigin.Begin );
 					byte[] result = new byte[ entry.size ];
-					_decompressor.Unwrap ( _binaryReader.ReadBytes ( entry.zsize ), result );
+					_decompressor.Decompress ( result, _binaryReader.ReadBytes ( entry.zsize ) );
 					return new MemoryStream ( result );
 				default:
 					return null;
@@ -138,7 +138,7 @@ namespace Eastward {
 					var arcInfo = new FileInfo ( path );
 					Utils.AffirmDir ( arcInfo.Directory.FullName, Path.GetFileNameWithoutExtension ( arcInfo.FullName ) + "/" + "dummy.dat" );
 
-					var zstdDecompressor = new Decompressor ();
+					var zstdDecompressor = new ZStdDecompressor ();
 
 					foreach ( var entry in gpackFile._fileDictionary.Keys ) {
 
@@ -165,7 +165,7 @@ namespace Eastward {
 								// br.BaseStream.Seek ( entry.zsize, SeekOrigin.Current );
 								br.BaseStream.Seek ( entry.offset, SeekOrigin.Begin );
 								byte[] result = new byte[ entry.size ];
-								zstdDecompressor.Unwrap ( br.ReadBytes ( entry.zsize ), result );
+								zstdDecompressor.Decompress ( result, br.ReadBytes ( entry.zsize ) );
 								File.WriteAllBytes ( realPath, result );
 								break;
 						}
