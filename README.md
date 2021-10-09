@@ -7,15 +7,19 @@
 ### Project "AssetIndexPeeker"
 * 遍历asset_index统计出现过的AssetNode类型
 * 遍历asset_index统计出现过的ObjectFiles类型
+* Usage: AssetIndexPeeker.exe {GamePath}
 
 ### Project "FixLibExt"
 * 用于解包lib.g后，出现的文件都以‘_'结尾，进行批量处理结尾重命名为.lua
+* Usage: FixLibExt.exe {GamePath}
 
 ### Project "ScriptLibraryExporter"
 * 用于导出script.g中出现的所有脚本文件，并还原为asset_index中定义的原资源名
+* Usage: ScriptLibraryExporter.exe {GamePath}
 
 ### Project "ShaderScriptExporter"
 * 用于导出script.g中出现的所有shader源文件(shader/vsh/fsh)，并还原为asset_index中定义的原资源名
+* Usage: ShaderScriptExporter.exe {GamePath}
 
 ### BatchScripts
 * 目录中包含解包script、lib后将luajit字节码还原为lua源代码
